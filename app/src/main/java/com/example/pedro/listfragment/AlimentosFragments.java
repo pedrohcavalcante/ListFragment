@@ -1,9 +1,12 @@
 package com.example.pedro.listfragment;
 
 import android.app.ListFragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 /**
  * Created by pedro on 17/04/2018.
@@ -12,6 +15,18 @@ import android.widget.ArrayAdapter;
 public class AlimentosFragments extends ListFragment {
 
     private ArrayAdapter<Alimento> adapter;
+
+    private OnItemClick listener;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(!(context instanceof OnItemClick)){
+            throw new RuntimeException("Não implementa OnItemClick");
+        }
+
+        listener = (OnItemClick) context;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -24,5 +39,17 @@ public class AlimentosFragments extends ListFragment {
             adapter.add(alimento);
         }
         setListAdapter(adapter);
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        Alimento alimento = adapter.getItem(position);
+        if(listener != null){
+            listener.onClickAlimento(alimento);
+        }
+    }
+
+    public interface OnItemClick{
+        public void onClickAlimento(Alimento alimento);
     }
 }
